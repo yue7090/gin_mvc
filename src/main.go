@@ -4,8 +4,13 @@ import (
 	"fmt"
 	"gopkg.in/ini.v1"
 	"github.com/router"
+	"github.com/mongo"
 	"os"
 )
+
+func init(){
+	mongo.Connect()
+}
 
  func main() {
 	cfg, err := ini.Load("config/conf.ini")

@@ -19,7 +19,8 @@ func InitRouter() *gin.Engine {
 
 	router := gin.Default()
 	router.HTMLRender = middleware.Default()
-
+	router.Use(middleware.Connect)
+	router.Use(middleware.ErrorHandler)
 	static_dir := cfg.Section("web").Key("static_dir").String()
 	router.Static("/static", static_dir)
 	router.GET("/", controller.Home)

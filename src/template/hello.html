@@ -1,5 +1,7 @@
 <html>
 	<h1>
-		{{ name }}
+		{% for user in userlist %}
+		<h3>{{ user.Name }}</h3>
+		{% endfor %}
 	</h1>
 </html>
