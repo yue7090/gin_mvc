@@ -16,9 +16,9 @@
 src/template/*
 src/static/*
 src/config
-src/router
+src/router/*
 src/controller
 src/config/conf.ini
 src/router/router.go
-src/controller/IndexController.go
+src/controller/*
 data/*
