@@ -21,3 +21,4 @@ src/controller
 src/config/conf.ini
 src/router/router.go
 src/controller/IndexController.go
+data/*
