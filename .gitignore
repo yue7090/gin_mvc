@@ -21,4 +21,5 @@ src/controller
 src/config/conf.ini
 src/router/router.go
 src/controller/*
+src/model/*
 data/*
