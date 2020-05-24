@@ -2,15 +2,62 @@ package middleware
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
+	"github.com/flosch/pongo2"
 )
-// ErrorHandler is a middleware to handle errors encountered during requests
-func ErrorHandler(c *gin.Context) {
-	c.Next()
+// 错误处理的结构体
+type Error struct {
+	StatusCode int    `json:"-"`
+	Code       int    `json:"code"`
+	Msg        string `json:"msg"`
+}
 
-	// TODO: Handle it in a better way
-	if len(c.Errors) > 0 {
-		c.HTML(http.StatusBadRequest, "400", gin.H{
-			"errors": c.Errors,
-		})
+
+var (
+	Success     = NewError(http.StatusOK, 0, "success")
+	ServerError = NewError(http.StatusInternalServerError, 200500, "系统异常，请稍后重试!")
+	NotFound    = NewError(http.StatusNotFound, 200404, http.StatusText(http.StatusNotFound))
+)
+
+func OtherError(message string) *Error {
+	return NewError(http.StatusForbidden, 100403, message)
+}
+
+
+func (e *Error) Error() string {
+	return e.Msg
+}
+
+func NewError(statusCode, Code int, msg string) *Error {
+	return &Error{
+		StatusCode: statusCode,
+		Code:       Code,
+		Msg:        msg,
 	}
+}
+
+// 404处理
+func HandleNotFound(c *gin.Context) {
+	err := NotFound
+	// c.JSON(err.StatusCode,err)
+	c.HTML(err.StatusCode, "404.html", pongo2.Context{})
+	return
+}
+
+func ErrHandler(c *gin.Context) {
+	defer func() {
+		if err := recover(); err != nil {
+			var Err *Error
+			if e,ok := err.(*Error); ok {
+				Err = e
+			}else if e, ok := err.(error); ok {
+				Err = OtherError(e.Error())
+			}else{
+				Err = ServerError
+			}
+			// 记录一个错误的日志
+			c.JSON(Err.StatusCode,Err)
+			return
+		}
+	}()
+	c.Next()
 }

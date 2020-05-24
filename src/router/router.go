@@ -20,10 +20,16 @@ func InitRouter() *gin.Engine {
 	router := gin.Default()
 	router.HTMLRender = middleware.Default()
 	router.Use(middleware.Connect)
-	router.Use(middleware.ErrorHandler)
+
+	router.NoMethod(middleware.HandleNotFound)
+	router.NoRoute(middleware.HandleNotFound)
+	router.Use(middleware.ErrHandler)
+
 	static_dir := cfg.Section("web").Key("static_dir").String()
 	router.Static("/static", static_dir)
+	
 	router.GET("/", controller.Home)
+
 	router.GET("/test", func(c *gin.Context) {
         // Use pongo2.Context instead of gin.H
         c.HTML(http.StatusOK, "hello.html", pongo2.Context{"name": "world"})
