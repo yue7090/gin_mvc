@@ -18,6 +18,7 @@ func InitRouter() *gin.Engine {
 	}
 
 	router := gin.Default()
+	router.Use(middleware.NewRateLimit(middleware.DefaultConfig()))
 	router.HTMLRender = middleware.Default()
 	router.Use(middleware.Connect)
 
@@ -27,7 +28,7 @@ func InitRouter() *gin.Engine {
 
 	static_dir := cfg.Section("web").Key("static_dir").String()
 	router.Static("/static", static_dir)
-	
+	router.StaticFile("/favicon.ico", static_dir+"/favicon.ico")
 	router.GET("/", controller.Home)
 
 	router.GET("/test", func(c *gin.Context) {
