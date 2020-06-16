@@ -29,13 +29,13 @@ func New(options RenderOptions) *Pongo2Render {
 }
 
 
-func Default() *Pongo2Render {
+func DefaultTemplateDir() *Pongo2Render {
 	cfg, err := ini.Load("config/conf.ini")
 	if err != nil {
         fmt.Printf("Fail to read file: %v", err)
         os.Exit(1)
 	}
-	template_dir := cfg.Section("web").Key("template_dir").String()
+	template_dir := cfg.Section("web_dir").Key("template_dir").String()
 	return New(RenderOptions{
 		TemplateDir: template_dir,
 		ContentType: "text/html; charset=utf-8",
@@ -45,7 +45,6 @@ func Default() *Pongo2Render {
 func (p Pongo2Render) Instance(name string, data interface{}) render.Render {
 	var template *pongo2.Template
 	filename := path.Join(p.Options.TemplateDir, name)
-
 	cfg, err := ini.Load("config/conf.ini")
 	if err != nil {
         fmt.Printf("Fail to read file: %v", err)

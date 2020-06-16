@@ -1,13 +1,11 @@
 package router
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"github.com/controller"
 	"gopkg.in/ini.v1"
 	"os"
 	"fmt"
 	"github.com/middleware"
-	"github.com/flosch/pongo2"
 )
 func InitRouter() *gin.Engine {
 	//读取配置文件
@@ -16,24 +14,26 @@ func InitRouter() *gin.Engine {
         fmt.Printf("Fail to read file: %v", err)
         os.Exit(1)
 	}
-
 	router := gin.Default()
-	router.Use(middleware.NewRateLimit(middleware.DefaultConfig()))
-	router.HTMLRender = middleware.Default()
+
+	//设置限流
+	router.Use(middleware.DefaultLimit())
+
+	//配置模板引擎
+	router.HTMLRender = middleware.DefaultTemplateDir()
+
+	//使用mongodb
 	router.Use(middleware.Connect)
 
 	router.NoMethod(middleware.HandleNotFound)
 	router.NoRoute(middleware.HandleNotFound)
+
+	//http错误设置
 	router.Use(middleware.ErrHandler)
 
 	static_dir := cfg.Section("web").Key("static_dir").String()
 	router.Static("/static", static_dir)
-	router.StaticFile("/favicon.ico", static_dir+"/favicon.ico")
 	router.GET("/", controller.Home)
 
-	router.GET("/test", func(c *gin.Context) {
-        // Use pongo2.Context instead of gin.H
-        c.HTML(http.StatusOK, "hello.html", pongo2.Context{"name": "world"})
-    })
 	return router
  }

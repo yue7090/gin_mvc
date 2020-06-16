@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"time"
 	"github.com/ratelimit"
+	"gopkg.in/ini.v1"
+	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -14,18 +17,30 @@ type Config struct {
 	LimitFunc func(c *gin.Context, ip string)
 }
 
-var defaultConfig = Config{
-	Duration: 60,
-	RateLimit:60,
-}
-
-func DefaultConfig() Config {
-	config := defaultConfig
-	return config
-}
-
 func DefaultLimit() gin.HandlerFunc {
-	return NewRateLimit(defaultConfig)
+	cfg, err := ini.Load("config/conf.ini")
+	if err != nil {
+        fmt.Printf("Fail to read file: %v", err)
+        os.Exit(1)
+	}
+	duration := cfg.Section("ratelimit").Key("duration").String()
+	rateLimit := cfg.Section("ratelimit").Key("rateLimit").String()
+	durationInt, err := strconv.ParseInt(duration,10,64)
+	if err != nil {
+		fmt.Printf("strconv: %v", err)
+		os.Exit(1)
+	}
+	rateLimitInt, err := strconv.ParseInt(rateLimit,10,64)
+	if err != nil {
+		fmt.Printf("strconv: %v", err)
+		os.Exit(1)
+	}
+	
+	return NewRateLimit(
+		Config{
+		Duration: durationInt,
+		RateLimit: rateLimitInt,
+	})
 }
 
 func NewRateLimit(config Config) gin.HandlerFunc {
