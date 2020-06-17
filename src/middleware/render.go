@@ -36,6 +36,10 @@ func DefaultTemplateDir() *Pongo2Render {
         os.Exit(1)
 	}
 	template_dir := cfg.Section("web_dir").Key("template_dir").String()
+	if template_dir == "" {
+		fmt.Println("template_dir setting can not be null")
+        os.Exit(1)
+	}
 	return New(RenderOptions{
 		TemplateDir: template_dir,
 		ContentType: "text/html; charset=utf-8",

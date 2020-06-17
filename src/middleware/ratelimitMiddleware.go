@@ -25,6 +25,10 @@ func DefaultLimit() gin.HandlerFunc {
 	}
 	duration := cfg.Section("ratelimit").Key("duration").String()
 	rateLimit := cfg.Section("ratelimit").Key("rateLimit").String()
+	if duration == "" || rateLimit == "" {
+		fmt.Println("duration or rateLimit setting can not be null")
+		os.Exit(1)
+	}
 	durationInt, err := strconv.ParseInt(duration,10,64)
 	if err != nil {
 		fmt.Printf("strconv: %v", err)
