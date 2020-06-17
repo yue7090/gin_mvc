@@ -27,4 +27,5 @@ replace (
 	github.com/ratelimit => ./ratelimit
 	github.com/router => ./router
 	github.com/service => ./service
+	github.com/cahce => ./cahce
 )
