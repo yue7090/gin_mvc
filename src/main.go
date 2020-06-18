@@ -19,7 +19,10 @@ func main() {
 		os.Exit(1)
 	}
 	port := cfg.Section("app").Key("port").String()
+	if port == "" {
+		fmt.Printf("post can not be null")
+		os.Exit(1)
+	}
 	r := router.InitRouter()
-	r.Run(":" + port) 
-	
+	r.Run(":" + port)
 }

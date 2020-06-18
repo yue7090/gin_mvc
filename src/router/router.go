@@ -14,6 +14,16 @@ func InitRouter() *gin.Engine {
         fmt.Printf("Fail to read file: %v", err)
         os.Exit(1)
 	}
+	appMode := cfg.Section("app").Key("app_mode").String()
+	if appMode == "" {
+		fmt.Printf("appMode can not be null")
+        os.Exit(1)
+	}
+	if appMode == "debug" {
+		gin.SetMode(gin.DebugMode)
+	}else{
+		gin.SetMode(gin.ReleaseMode)
+	}
 	router := gin.Default()
 
 	//设置限流
