@@ -1,11 +1,10 @@
 package router
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/controller"
 	"gopkg.in/ini.v1"
 	"os"
 	"fmt"
-	"github.com/middleware"
+	"gin-mvc/http"
 )
 func InitRouter() *gin.Engine {
 	//读取配置文件
