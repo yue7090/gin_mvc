@@ -4,7 +4,8 @@ import (
 	"gopkg.in/ini.v1"
 	"os"
 	"fmt"
-	"gin-mvc/http"
+	"gin-mvc/http/middleware"
+	"gin-mvc/http/controller"
 )
 func InitRouter() *gin.Engine {
 	//读取配置文件

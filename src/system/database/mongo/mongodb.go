@@ -16,9 +16,9 @@ func Connect() {
 		fmt.Printf("Fail to read file: %v", err)
 		os.Exit(1)
 	}
-	host := cfg.Section("mongodb").Key("host").String()
-	port := cfg.Section("mongodb").Key("port").String()
-	db := cfg.Section("mongodb").Key("database").String()
+	host := cfg.Section("mongodb.default").Key("host").String()
+	port := cfg.Section("mongodb.default").Key("port").String()
+	db := cfg.Section("mongodb.default").Key("database").String()
 	uri := "mongodb://"+ host +":"+port+"/"+db
 	mongo, err := mgo.ParseURL(uri)
 	session, err := mgo.Dial( uri)

@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
-	"github.com/ratelimit"
+	"gin-mvc/system/lib/ratelimit"
 	"gopkg.in/ini.v1"
 	"os"
 	"strconv"

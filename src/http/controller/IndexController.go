@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"github.com/flosch/pongo2"
-	"github.com/service"
+	"gin-mvc/http/service"
 )
 
 func Home(c *gin.Context) {

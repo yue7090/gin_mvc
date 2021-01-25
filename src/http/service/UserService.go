@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/model"
+	"gin-mvc/http/model"
 	"gopkg.in/mgo.v2"
 )
 

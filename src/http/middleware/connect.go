@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mongo"
+	"gin-mvc/system/database/mongo"
 )
 
 func Connect(c *gin.Context) {
