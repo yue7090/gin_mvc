@@ -33,7 +33,7 @@ func InitRouter() *gin.Engine {
 	router.HTMLRender = middleware.DefaultTemplateDir()
 
 	//使用mongodb
-	router.Use(middleware.Connect)
+	// router.Use(middleware.Connect)
 
 	router.NoMethod(middleware.HandleNotFound)
 	router.NoRoute(middleware.HandleNotFound)

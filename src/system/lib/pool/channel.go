@@ -45,7 +45,7 @@ type channelPool struct {
 
 func NewChannelPool(poolConfig *Config) (Pool, error) {
 	if !(poolConfig.InitialCap <= poolConfig.MaxIdle && poolConfig.MaxCap >= poolConfig.MaxIdle && poolConfig.InitialCap >=0){
-		return nil, error.New("invalid capacity settings")
+		return nil, errors.New("invalid capacity settings")
 	}
 	if poolConfig.Factory == nil {
 		return nil, errors.New("invalid factory func settings")
@@ -71,12 +71,12 @@ func NewChannelPool(poolConfig *Config) (Pool, error) {
 			c.Release()
 			return nil, fmt.Errorf("factory is not able to fill the pool: %s", err)
 		}
-		c.conns <- &idleConn{conn: conn, t:time.Now()}
+		c.conns <- &idleConn{conn: conn, t: time.Now()}
 	}
 	return c, nil
 }
 
-func (c *channelPool) getConns chan *idleConn {
+func (c *channelPool) getConns() chan *idleConn {
 	c.mu.Lock()
 	conns := c.conns
 	c.mu.Unlock()
@@ -97,7 +97,7 @@ func (c *channelPool) Get() (interface{}, error) {
 			}
 			//判断是否超时，超时则抛弃
 			if timeout := c.IdleTimeout; timeout >0 {
-				if wrapConn.t.Add(timeout).Before(time.now()) {
+				if wrapConn.t.Add(timeout).Before(time.Now()) {
 					c.Close(wrapConn.conn)
 					continue
 				}
@@ -115,9 +115,9 @@ func (c *channelPool) Get() (interface{}, error) {
 			log.Debugf("openConn &v %v", c.openingConns, c.maxActive)
 			if c.openingConns >= c.maxActive {
 				req := make(chan connReq, 1)
-				c.connReqs = append(c.MaxActiveConnReached, req)
+				c.connReqs = append(c.connReqs, req)
 				c.mu.Unlock()
-				ret, ok := <=req
+				ret, ok := <- req
 				if !ok {
 					return nil, ErrMaxActiveConnetReached
 				}
@@ -127,7 +127,7 @@ func (c *channelPool) Get() (interface{}, error) {
 						continue
 					}
 				}
-				return ret.idleConn.conn
+				return ret.idleConn.conn, nil
 			}
 			if c.factory == nil {
 				c.mu.Unlock()
