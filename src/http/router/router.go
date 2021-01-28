@@ -41,7 +41,7 @@ func InitRouter() *gin.Engine {
 	//http错误设置
 	router.Use(middleware.ErrHandler)
 
-	static_dir := cfg.Section("web").Key("static_dir").String()
+	static_dir := cfg.Section("web_dir").Key("static_dir").String()
 	router.Static("/static", static_dir)
 	router.GET("/", controller.Home)
 
