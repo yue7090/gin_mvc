@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"github.com/flosch/pongo2"
 	"gin-mvc/http/service"
+	"fmt"
 )
 
 func Home(c *gin.Context) {
-	user := service.Users(c)
-	c.HTML(http.StatusOK, "hello.html", pongo2.Context{"userlist": user})
+	data := service.Select()
+	fmt.Println(data)
+	c.HTML(http.StatusOK, "hello.html", pongo2.Context{"userlist": data})
 }

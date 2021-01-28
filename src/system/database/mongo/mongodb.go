@@ -92,30 +92,32 @@ func (mo *MongoDB) Register(name string) {
 		//连接最大空闲时间，超过该时间的连接 将会关闭，可避免空闲时连接EOF，自动失效的问题
 		IdleTimeout: time.Duration(idleTimeout) * time.Second,
 	})
+	
 	if err != nil {
-		// logger.Error("register mongodb conn [%s] error:%v", name, err)
 		fmt.Println(err)
 		return
 	}
+
 	mo.insertPool(name, p)
 }
 
 func (mo *MongoDB) getDB(name string) (conn interface{}, put func(), err error) {
+	dbname := "database.mongodb." + name
 	put = func() {}
 
-	if _, ok := mo.connPool[name]; !ok {
+	if _, ok := mo.connPool[dbname]; !ok {
 		return nil, put, errors.New("no mongodb connect")
 	}
 
-	conn, err = mo.connPool[name].Get()
+	conn, err = mo.connPool[dbname].Get()
 	if err != nil {
 		return nil, put, errors.New(fmt.Sprintf("mongodb get connect err:%v", err))
 	}
 
 	put = func() {
-		mo.connPool[name].Put(conn)
+		mo.connPool[dbname].Put(conn)
 	}
-
+	
 	return conn, put, nil
 }
 
@@ -127,7 +129,6 @@ func (mo *MongoDB) insertPool(name string, p pool.Pool) {
 	mo.lock.Lock()
 	defer mo.lock.Unlock()
 	mo.connPool[name] = p
-
 }
 
 // putDB 将连接放回连接池
