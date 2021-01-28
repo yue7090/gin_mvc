@@ -102,22 +102,22 @@ func (mo *MongoDB) Register(name string) {
 }
 
 func (mo *MongoDB) getDB(name string) (conn interface{}, put func(), err error) {
-	dbname := "database.mongodb." + name
 	put = func() {}
-
-	if _, ok := mo.connPool[dbname]; !ok {
+	fmt.Println("name")
+	fmt.Println(name)
+	if _, ok := mo.connPool[name]; !ok {
 		return nil, put, errors.New("no mongodb connect")
 	}
 
-	conn, err = mo.connPool[dbname].Get()
+	conn, err = mo.connPool[name].Get()
 	if err != nil {
 		return nil, put, errors.New(fmt.Sprintf("mongodb get connect err:%v", err))
 	}
 
 	put = func() {
-		mo.connPool[dbname].Put(conn)
+		mo.connPool[name].Put(conn)
 	}
-	
+
 	return conn, put, nil
 }
 
@@ -128,7 +128,9 @@ func (mo *MongoDB) insertPool(name string, p pool.Pool) {
 
 	mo.lock.Lock()
 	defer mo.lock.Unlock()
+
 	mo.connPool[name] = p
+
 }
 
 // putDB 将连接放回连接池
@@ -148,19 +150,19 @@ func GetMongo(name string) (db *mgo.Database, put func(), err error) {
 		return nil, put, errors.New("db connect is nil")
 	}
 
-	conn, put, err := mongoConn.getDB(name)
+	conn, put, err := mongoConn.getDB("database.mongodb." + name)
 	if err != nil {
 		return nil, put, err
 	}
+
 	session := conn.(*mgo.Session)
 
-	// dbName := cfg.GetString("database.mongo."+name+".dbname", "local")
 	cfg, err := ini.Load("config/conf.ini")
 	if err != nil{
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	dbName := cfg.Section("database.mongo."+name).Key("dbname").String()
+	dbName := cfg.Section("database.mongodb."+name).Key("dbname").String()
 	db = session.DB(dbName)
 	return db, put, nil
 }
