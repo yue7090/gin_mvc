@@ -55,6 +55,7 @@ func (mo *MongoDB) Register(name string) {
 	connUrl := cfg.Section(name).Key("uri").String()
 	connTimeoutStr := cfg.Section("database.mongodb").Key("timeout").String()
 	connTimeout, err := strconv.Atoi(connTimeoutStr)
+	
 	initCapStr := cfg.Section("database.mongodb").Key("initCap").String()
 	initCap, err := strconv.Atoi(initCapStr)
 	maxCapStr := cfg.Section("database.mongodb").Key("maxCap").String()

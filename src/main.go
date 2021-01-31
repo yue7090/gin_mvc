@@ -6,6 +6,7 @@ import (
 	"os"
 	"gin-mvc/http/router"
 	"gin-mvc/system/database/mongo"
+	"gin-mvc/system/database/mysql"
 )
 
 func main() {
@@ -15,6 +16,7 @@ func main() {
 		os.Exit(1)
 	}
 	mongo.NewMongo().RegisterAll()
+	mysql.NewMysql().RegisterAll()
 	port := cfg.Section("app").Key("port").String()
 	r := router.InitRouter()
 	r.Run(":" + port)

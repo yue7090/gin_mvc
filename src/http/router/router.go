@@ -25,7 +25,9 @@ func InitRouter() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.Default()
-
+	adminurl := cfg.Section("app").Key("admin_url").String()
+	admin := router.Group("/"+adminurl)
+	admin.GET("/index",controller.Admin)
 	//设置限流
 	router.Use(middleware.DefaultLimit())
 
